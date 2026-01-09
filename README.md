@@ -129,6 +129,13 @@ Cada chamada adiciona uma nova instância do bloco renderizado.
 ```go
 tpl.Var("title", "Exemplo")
 ```
+Também é possível verificar se a variável existe no código HTML.
+
+```go
+if tpl.VarExist("user") {
+	tpl.Var("title", "Exemplo")
+}
+```
 
 ---
 
@@ -145,6 +152,16 @@ tpl.Var("user", User{Name: "Usuário"})
 O acesso a campos é **case-insensitive** e ignora `_`.
 
 ---
+
+### Incluir Outros Arquivos HTML
+
+```html
+{{menutopo}}
+```
+
+```go
+tpl.IncludeFile("menutopo", "public/menutopo.html")
+```
 
 ## 🔁 Modificadores
 
