@@ -15,27 +15,46 @@ import (
 
 type MGTemplate struct {
 	source     string
-	context    map[string]interface{}
+	context    map[string]any
 	blocks     map[string]string
 	blockAccum map[string]string
 }
 
 func ReadFile(path string) (*MGTemplate, error) {
-	b, err := os.ReadFile(path)
+	sHTML, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
 	return &MGTemplate{
-		source:     string(b),
-		context:    map[string]interface{}{},
+		source:     string(sHTML),
+		context:    map[string]any{},
 		blocks:     map[string]string{},
 		blockAccum: map[string]string{},
 	}, nil
 }
 
-func (e *MGTemplate) Var(name string, value interface{}) {
+func (e *MGTemplate) IncludeFile(varname string, path string) error {
+	sHTML, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	e.source = strings.ReplaceAll(e.source, "{{"+varname+"}}", string(sHTML))
+
+	return nil
+}
+
+func (e *MGTemplate) Var(name string, value any) {
 	e.context[name] = value
+}
+
+func (e *MGTemplate) VarExists(name string) bool {
+	if strings.Contains(e.source, "{{"+name+"}}") {
+		return true
+	}
+
+	return false
 }
 
 func (e *MGTemplate) Section(name string) {
